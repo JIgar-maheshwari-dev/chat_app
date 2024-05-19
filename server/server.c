@@ -87,10 +87,10 @@ int main()
     close_all_thread(&head);
     pthread_mutex_unlock(&listMutex);
     join_all(&head);
-
+    
     addLog(fp, "SERVER TURNED OFF");
     fclose(fp);
-    // close_all_fd(&head);
+    close_all_fd(&head);
     close(server_fd);
     printf("Server turned OFF...\n");
     return 0;

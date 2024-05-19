@@ -25,7 +25,7 @@
 #define REPLNAME "NAME: "
 
 #define REQ_LIST "getlist"
-#define CONN_REQ "connect:"
+#define CONN_REQ "connect "
 
 #define CONN_FAIL1 "USER_BUSY"
 #define CONN_FAIL2 "USER_NOT_FOUND"
@@ -58,7 +58,6 @@ struct thread_info
     int busy_flag : 1;      //busy flag, is client is connected with any other or not
     char name[NAMELEN];     //name of current client
     char conn_name[NAMELEN];            //socket fd of connected client
-    int timeout;
     struct thread_manage **head;
 };
 
@@ -80,7 +79,14 @@ typedef enum {
     NODE_NOT_FOUND,
     NULL_LIST,
     USER_NOT_FOUND,
-    BUSY
+    BUSY,
+    MODE_OUT_OF_RAGE,
+    NULL_BYTES,
+    TERMINATE_MSG,
+    NAME_ADDED,
+    REQ_LIST_T,
+    BREAK,
+    CONT
 } r_type;
 
 #define RST_LOG_BFR memset(logMsg, '\0', strlen(logMsg))

@@ -180,12 +180,12 @@ int check_and_connect(thread_info *self, char* name)
         {   
             flag_name_check = 0;
             if( !(temp->self.busy_flag) ){
-                self->fds[1].fd = temp->self.fds[0].fd;
-                temp->self.fds[1].fd = self->fds[0].fd;
-                strcpy(self->conn_name, name);
-                strcpy(temp->self.conn_name,self->conn_name);
-                temp->self.busy_flag = 1;
-                self->busy_flag = 1;
+                self->fds[1].fd = temp->self.fds[0].fd;  //self->conn fd = other side client's fd
+                temp->self.fds[1].fd = self->fds[0].fd; //other side's conn fd = client's fd
+                strcpy(self->conn_name, name);  //conn_name = other side client's name
+                strcpy(temp->self.conn_name,self->conn_name); //other side_conn name = self->name
+                temp->self.busy_flag = 1;   //set busy flag to 1
+                self->busy_flag = 1;    
                 return r;
             }
         }
