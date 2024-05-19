@@ -41,19 +41,19 @@ void *thread_handle(void *arg)
                 continue;
             }
         }
-        status = check_from_other_side(self,buffer);  //checking data from connected client side
-        if( status != SUCCESS)
-        {
-            status =  check_status_after_data_read(status,self);
-            if( BREAK == status )
-            {
-                break;
-            }
-            if(CONT == status )
-            {
-                continue;
-            }
-        }
+        // status = check_from_other_side(self,buffer);  //checking data from connected client side
+        // if( status != SUCCESS)
+        // {
+        //     status =  check_status_after_data_read(status,self);
+        //     if( BREAK == status )
+        //     {
+        //         break;
+        //     }
+        //     if(CONT == status )
+        //     {
+        //         continue;
+        //     }
+        // }
     }
     if( !(self->run_flag) ) //send termination signal to client if we initiated termination
     {
@@ -157,24 +157,39 @@ int check_for_data(thread_info *self,char *buff )
                 }
                 return r;
             }
-        }
-        else if(self->busy_flag == 1 ) //busy flag is 1 means we are connected with some another client
-        {                               // so whatever comes here send back to another side client
-            if( !strcmp(buff,TERMINATE) )
+            else
             {
-                printf("Terminate msg fron client [ %s ] \n",self->conn_name);
-                r = TERMINATE_MSG_BUSY;
-                return r;
+                printf("Invalid CMD \n");
+                send(SELFFD,ILLG_CMD,strlen(ILLG_CMD),0);
+                return SUCCESS;
+            }
+
+        }
+        // else if(self->busy_flag == 1 ) //busy flag is 1 means we are connected with some another client
+        // {                               // so whatever comes here send back to another side client
+        //     printf("here we are ...\n");
+        //     if( !strcmp(buff,TERMINATE) )
+        //     {
+        //         printf("Terminate msg fron client [ %s ] \n",self->conn_name);
+        //         r = TERMINATE_MSG_BUSY;
+        //         return r;
+        //     }
+        //     else
+        //     {
+        //         printf("[ %s ] sends msg to [ %s ] [ %s ]\n",self->conn_name,self->name,buff);
+        //     }
+        // }
+        else
+        {
+            if(self->busy_flag)
+            {
+                send(CONNFD,buff,strlen(buff),0);
             }
             else
             {
-                printf("[ %s ] sends msg to [ %s ] [ %s ]\n",self->conn_name,self->name,buff);
+                printf("[ %s ] %s \n",self->name,buff);
             }
         }
-        // else
-        // {
-        //     printf("[ %s ] %s \n",self->name,buff);
-        // }
 
     }
     return r;

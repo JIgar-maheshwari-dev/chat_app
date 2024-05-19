@@ -70,27 +70,27 @@ typedef struct thread_info thread_info;
 typedef struct thread_manage thread_manage;
 
 typedef enum {
-    SUCCESS = 0,
-    NULL_PTR,
-    SOCK_FAIL,
-    BIND_FAIL,
-    LISN_FAIL,
-    DMA_FAIL,
-    CONN_WITH_ITSELF,
-    NODE_NOT_FOUND,
-    NULL_LIST,
-    USER_NOT_FOUND,
-    BUSY,
-    MODE_OUT_OF_RAGE,
-    NULL_BYTES,
-    TERMINATE_MSG,
-    NAME_ADDED,
-    REQ_LIST_T,
-    BREAK,
-    CONT,
-    CONN_REQ_T,
-    TERMINATE_MSG_BUSY
-} r_type;
+    SUCCESS = 0,        //0
+    NULL_PTR,           //1
+    SOCK_FAIL,          //2
+    BIND_FAIL,          //3
+    LISN_FAIL,          //4
+    DMA_FAIL,           //5
+    CONN_WITH_ITSELF,   //6
+    NODE_NOT_FOUND,     //7
+    NULL_LIST,          //8
+    USER_NOT_FOUND,     //9
+    BUSY,               //10
+    MODE_OUT_OF_RAGE,   //11
+    NULL_BYTES,         //12
+    TERMINATE_MSG,      //13
+    NAME_ADDED,         //14
+    REQ_LIST_T,         //15
+    BREAK,              //16
+    CONT,               //17
+    CONN_REQ_T,         //18
+    TERMINATE_MSG_BUSY  //19
+} r_type;   
 
 #define RST_LOG_BFR memset(logMsg, '\0', strlen(logMsg))
 
