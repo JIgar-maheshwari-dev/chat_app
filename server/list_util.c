@@ -195,7 +195,8 @@ int check_and_connect(thread_info *self, char* name)
     {
         r = USER_NOT_FOUND;
     }
-    else{
+    else
+    {
         r = BUSY;
     }
     return r;

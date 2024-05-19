@@ -76,6 +76,7 @@ typedef enum {
     BIND_FAIL,
     LISN_FAIL,
     DMA_FAIL,
+    CONN_WITH_ITSELF,
     NODE_NOT_FOUND,
     NULL_LIST,
     USER_NOT_FOUND,
@@ -86,13 +87,14 @@ typedef enum {
     NAME_ADDED,
     REQ_LIST_T,
     BREAK,
-    CONT
+    CONT,
+    CONN_REQ_T,
+    TERMINATE_MSG_BUSY
 } r_type;
 
 #define RST_LOG_BFR memset(logMsg, '\0', strlen(logMsg))
 
 extern pthread_mutex_t listMutex ;
-
 
 extern short run_flag ;
 extern short open ;
