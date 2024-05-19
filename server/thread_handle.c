@@ -41,19 +41,6 @@ void *thread_handle(void *arg)
                 continue;
             }
         }
-        // status = check_from_other_side(self,buffer);  //checking data from connected client side
-        // if( status != SUCCESS)
-        // {
-        //     status =  check_status_after_data_read(status,self);
-        //     if( BREAK == status )
-        //     {
-        //         break;
-        //     }
-        //     if(CONT == status )
-        //     {
-        //         continue;
-        //     }
-        // }
     }
     if( !(self->run_flag) ) //send termination signal to client if we initiated termination
     {
@@ -165,57 +152,28 @@ int check_for_data(thread_info *self,char *buff )
             }
 
         }
-        // else if(self->busy_flag == 1 ) //busy flag is 1 means we are connected with some another client
-        // {                               // so whatever comes here send back to another side client
-        //     printf("here we are ...\n");
-        //     if( !strcmp(buff,TERMINATE) )
-        //     {
-        //         printf("Terminate msg fron client [ %s ] \n",self->conn_name);
-        //         r = TERMINATE_MSG_BUSY;
-        //         return r;
-        //     }
-        //     else
-        //     {
-        //         printf("[ %s ] sends msg to [ %s ] [ %s ]\n",self->conn_name,self->name,buff);
-        //     }
-        // }
-        else
-        {
-            if(self->busy_flag)
+        else if(self->busy_flag == 1 ) //busy flag is 1 means we are connected with some another client
+        {                               // so whatever comes here send back to another side client
+            printf("here we are ...\n");
+            if( !strcmp(buff,TERMINATE) )
             {
-                send(CONNFD,buff,strlen(buff),0);
+                printf("Terminate msg fron client [ %s ] while busy \n",self->conn_name);
+                r = TERMINATE_MSG_BUSY;
+                return r;
             }
             else
             {
-                printf("[ %s ] %s \n",self->name,buff);
+                printf("[ %s ] sends msg to [ %s ] [ %s ]\n",self->name,self->conn_name,buff);
+                send(CONNFD,buff,strlen(buff),0);
             }
+        }
+        else
+        {
+            printf("do nothingg...\n");
         }
 
     }
     return r;
-}
-
-
-int check_from_other_side(thread_info *self,char *buff)
-{
-    struct pollfd fd = self->fds[0];
-
-    r_type r = SUCCESS;
-    if(fd.revents & POLLIN )        //if other side has sent something to us
-    {
-        memset(buff,'\0',BUFSIZE);
-        int bytes_read = recv(fd.fd,buff,BUFSIZE,0);
-        if( !bytes_read )
-        {
-            r = NULL_BYTES;
-            return r;
-        }
-        else if(run_flag)
-        {
-            send(CONNFD,buff,strlen(buff),0);
-        }
-
-    }
 }
 
 

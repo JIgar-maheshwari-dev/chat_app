@@ -54,8 +54,8 @@ struct thread_info
 {
     long int tid;           //thread id of current thread
     struct pollfd fds[2];   //two fds in this 0 for socket 1 for connection
-    int run_flag : 1;       //run flag,client is active or not
-    int busy_flag : 1;      //busy flag, is client is connected with any other or not
+    int run_flag ;       //run flag,client is active or not
+    int busy_flag ;      //busy flag, is client is connected with any other or not
     char name[NAMELEN];     //name of current client
     char conn_name[NAMELEN];            //socket fd of connected client
     struct thread_manage **head;
