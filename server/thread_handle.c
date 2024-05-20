@@ -16,7 +16,6 @@ void *thread_handle(void *arg)
     strcpy(msg, REQ_NAME);
 
     send(SELFFD, REQ_NAME, strlen(REQ_NAME), 0);
-    print_list(*(self->head));
     while (self->run_flag)
     {
         int status = poll(self->fds, 2, T_TIMEOUT);
@@ -242,6 +241,7 @@ int check_status_after_data_read(int status, thread_info *self)
             send(SELFFD, frame, strlen(frame), 0);
         }
         printf("status [ %s ][ %d ]\n",self->name,status);
+        // free(list);
         r = CONT;
     }
     else if ( (status == CONN_REQ_T) || (status == CONN_WITH_ITSELF) || (status == BYE_T) || (status == TERMINATE_MSG_BUSY) )

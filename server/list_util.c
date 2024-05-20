@@ -120,16 +120,26 @@ char **get_list(thread_manage **head, int *number)
 
     while (temp != NULL)
     {
-        if ( (temp->self.run_flag != 0)   &&   ((strcmp(temp->self.name,UNDEF))) )
+        if ( ((strcmp(temp->self.name,UNDEF))) )
         {
             char *name = (char *)malloc(sizeof(char) * (strlen(temp->self.name)));
+            if(name == NULL )
+            {
+                printf("DMA FAILED\n");
+                return NULL;
+            }
             name = temp->self.name;
-            printf("name %d : %s \n", n, name);
+            printf("user %d : %s \n", n, temp->self.name);
             list[n - 1] = name;
             temp = temp->next;
-            if (temp != NULL)
+            if (temp != NULL && strcmp(temp->self.name,UNDEF))
             {
-                list = (char **)realloc(list, sizeof(char *) * (++n));
+                list = (char **)realloc(list, sizeof(char *) * (n++));
+                if(list == NULL)
+                {
+                    printf("DMA FAILED\n");
+                    return NULL;
+                }
             }
         }
         else
@@ -154,7 +164,6 @@ char *make_frame(char **list,int n)
     }
     strcat(frame,MSG_START);
     strcat(frame,FRAME_END);
-
     //printf("[ frame ] [ %s ]\n",frame);
     return frame;
 }
@@ -207,9 +216,6 @@ int check_and_connect(thread_info *self, char* name)
     }
     return r;
 }
-
-
-
 
 void del_node(thread_info *self)
 {
@@ -321,9 +327,11 @@ void del_connection(thread_info *self)
 void print_list(thread_manage *head)
 {
     thread_manage *temp = head;
+    printf("\n");
     while(temp != NULL )
     {
-        printf("\nAddr : %p(Name : %s) (next : %p )--> ",temp,temp->self.name,temp->next);
+        printf("( %s )-> ",temp->self.name );
         temp = temp->next;
     }
+    printf("\n");
 }

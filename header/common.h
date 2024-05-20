@@ -16,7 +16,8 @@
 #define BACKLOG 2
 #define BUFSIZE 1024
 #define NAMELEN 30
-#define IP "192.168.71.145"
+
+#define IP "127.0.0.1"
 #define TIMEOUT 1000
 #define T_TIMEOUT 1000
 
