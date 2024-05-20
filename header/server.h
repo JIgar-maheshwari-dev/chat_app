@@ -35,7 +35,10 @@ int check_status_after_data_read(int status,thread_info *self);
 
 int check_and_connect(thread_info *self, char* name);
 
-int check_from_other_side(thread_info *self,char *buff);
+void del_connection(thread_info *self);
 
+thread_info *get_info_with_name(thread_info *self,char *name);
+
+void print_list(thread_manage *head);
 
 #endif

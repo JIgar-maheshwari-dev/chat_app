@@ -9,8 +9,8 @@ void create_thread_manage(thread_manage *temp, int fd, thread_manage **head)
     temp->self.fds[1].events = POLLIN; // look for incoming data on connection's fd
     temp->self.run_flag = 1;
     temp->self.busy_flag = 0;
-    memset(temp->self.name, '\0', sizeof(temp->self.name));
-    memset(temp->self.conn_name, '\0', sizeof(temp->self.conn_name));
+    memset(temp->self.name, '\0', NAMELEN);
+    memset(temp->self.conn_name, '\0', NAMELEN);
     strcpy(temp->self.name, UNDEF);
     strcpy(temp->self.conn_name, UNDEF);
 
@@ -19,7 +19,7 @@ void create_thread_manage(thread_manage *temp, int fd, thread_manage **head)
     if (temp_node == NULL)
     {
         // first node to be added
-        printf("Adding HEAD..\n");
+        printf("Adding HEAD..[ %p ]\n",temp);
         *head = temp;
     }
     else
@@ -112,6 +112,11 @@ char **get_list(thread_manage **head, int *number)
         return NULL;
     }
     char **list = (char **)malloc(sizeof(char *) * (++n));
+    if(list == NULL )
+    {
+        printf("DMA FAILED IN GET LIST \n");
+        return NULL;
+    }
 
     while (temp != NULL)
     {
@@ -224,10 +229,19 @@ void del_node(thread_info *self)
         if(self->fds[0].fd == (*(self->head))->self.fds[0].fd )
         {
             //deleting the head it self
-            printf("[ %s ] Node deleted \n",temp->self.name);
-            free(temp);
-            (*(self->head)) = NULL;
-            ((self->head)) = NULL;
+            printf("[ %s ] Head deleted \n",temp->self.name);
+            if( ((*(self->head))->next) == NULL )
+            {
+                free(temp);
+                (*(self->head)) = NULL;
+                ((self->head)) = NULL;
+            }
+            else
+            {
+                (*(self->head)) = ((*(self->head))->next);
+                free(temp);
+                temp = NULL;
+            }
             return;
         }
         while( (temp != NULL) && (temp->self.fds[0].fd != SELFFD) )
@@ -248,4 +262,68 @@ void del_node(thread_info *self)
         }
     }
 
+}
+
+
+thread_info *get_info_with_name(thread_info *self,char *name)
+{
+    if( (NULL == self) || (NULL == self->head) || ( NULL == *(self->head)) )
+    {
+        return NULL;
+    }
+
+    thread_manage *temp = *(self->head);
+    while( temp != NULL )
+    {
+        if( !strcmp(temp->self.name,name) )
+        {
+            return &(temp->self);
+        }
+        temp = temp->next;
+    }
+
+    return NULL;
+}
+
+
+void del_connection(thread_info *self)
+{
+    thread_info *conn = get_info_with_name(self,self->conn_name);
+    if(conn == NULL)
+    {
+        printf("Error in finding connection node \n");
+        return;
+    }
+    printf("Deleting connection [ %s ] to [ %s ]\n",self->name,self->conn_name);
+    if( (self->busy_flag == 0) || (conn->busy_flag == 0) ){
+        printf("Self busy flag already 0 \n");
+        return;
+    }
+    else if( (self->busy_flag != 0) && (conn->busy_flag != 0 ) )
+    {
+        printf("Setting self busy flag 0 \n");
+        self->busy_flag = 0;
+        printf("Setting conn busy flag 0 \n");
+        conn->busy_flag = 0;
+        if( !(strcmp(self->conn_name,conn->name)) && !(strcmp(conn->conn_name,self->name)) )
+        {
+            printf("Removing self conn name \n");
+            memset(self->conn_name,'\0',NAMELEN);
+            printf("Removing conn conn name \n");
+            memset(conn->conn_name,'\0',NAMELEN);
+        }
+        self->fds[1].fd = -1;
+        conn->fds[1].fd = -1;
+    }
+}
+
+
+void print_list(thread_manage *head)
+{
+    thread_manage *temp = head;
+    while(temp != NULL )
+    {
+        printf("\nAddr : %p(Name : %s) (next : %p )--> ",temp,temp->self.name,temp->next);
+        temp = temp->next;
+    }
 }

@@ -9,7 +9,7 @@
 #define START "`&"
 #define END "&`"
 
-char str[]="CONNECT:Jigar";
+char str[]="CONNECT: Jigar";
 
 int main(){
 

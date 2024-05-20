@@ -15,8 +15,8 @@
 #define PORT 8080
 #define BACKLOG 2
 #define BUFSIZE 1024
-#define NAMELEN 10
-#define IP "127.0.0.1"
+#define NAMELEN 30
+#define IP "192.168.71.145"
 #define TIMEOUT 1000
 #define T_TIMEOUT 1000
 
@@ -89,7 +89,8 @@ typedef enum {
     BREAK,              //16
     CONT,               //17
     CONN_REQ_T,         //18
-    TERMINATE_MSG_BUSY  //19
+    TERMINATE_MSG_BUSY,  //19
+    BYE_T               //20
 } r_type;   
 
 #define RST_LOG_BFR memset(logMsg, '\0', strlen(logMsg))
@@ -99,9 +100,4 @@ extern pthread_mutex_t listMutex ;
 extern short run_flag ;
 extern short open ;
 
-/*functions*/
-
 #endif
-
-
-

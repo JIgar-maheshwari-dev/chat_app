@@ -66,7 +66,7 @@ int main()
         {
 
             // something available to read from client_fd, means server has sent something to us
-            memset(buffer, '\0', strlen(buffer));
+            memset(buffer, '\0', BUFSIZE);
             bytes_read = recv(client_fd, buffer, BUFSIZE - 1, 0);
             buffer[bytes_read] = '\0';
 
@@ -97,7 +97,7 @@ int main()
         else if (sfd[1].revents & POLLIN) // something to send
         {
             // something available on stdin,read it and send it to the server
-            memset(msg, '\0', strlen(buffer));
+            memset(msg, '\0', BUFSIZE);
             int bytes_read = read(STDIN_FILENO, msg, BUFSIZE-1);
             msg[bytes_read-1] = '\0';
             // printf("read from keayboard : %s \n",msg);
@@ -136,7 +136,7 @@ void print_info(void)
 {
     printf("Connected with server successfully \n");
     printf("\"getlist \" To get the list of available users  \n");
-    printf("\"connect: name \" To get connected with the user with name \n");
+    printf("\"connect name \" To get connected with the user with name \n");
 }
 
 
