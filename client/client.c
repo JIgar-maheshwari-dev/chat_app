@@ -1,4 +1,5 @@
 #include "../header/common.h"
+
 short run_flag = 1;
 
 void sig_handler(int sig)
@@ -11,6 +12,11 @@ void sig_handler(int sig)
 
 void print_info(void);
 void deframe_print(char *frame);
+void change_client(char *buff,int n);
+
+char client[NAMELEN] = "server";
+char change_client_indicator[] = "connection succesfull with";
+char bye[] = "BYE";
 
 int main()
 {
@@ -18,7 +24,6 @@ int main()
     int status, client_fd;
     int bytes_read = 0;
     int read_name = 0;
-    int conn_req = 0;
     char buffer[BUFSIZE] = "";
     char msg[BUFSIZE] = "";
 
@@ -91,8 +96,19 @@ int main()
                 deframe_print(buffer);
                 continue;
             }
-
-            printf("[ server ] : %s \n", buffer);
+            else if( !(strncmp(change_client_indicator,buffer,strlen(change_client_indicator))) )
+            {
+                printf("%s\n",buffer);
+                change_client(buffer,0);
+                continue;
+            }
+            else if( !(strncmp(bye,buffer,strlen(bye))) )
+            {
+                printf("%s\n",buffer);
+                change_client(buffer,1);
+                continue;
+            }
+            printf("[ %s ] : %s \n",client,  buffer);
         }
         else if (sfd[1].revents & POLLIN) // something to send
         {
@@ -111,11 +127,16 @@ int main()
                 read_name = 0;
                 continue;
             }
-            else if( !(strncmp(CONN_REQ,buffer,strlen(buffer))))
+            else if( !(strncmp(TERMINATE,msg,strlen(TERMINATE))))
             {
-                //we want to send the msg of connection request
-                conn_req = 1;
+                run_flag =0;
+                break;
             }
+            else if( !(strncmp(bye,msg,strlen(bye))) )
+            {
+                change_client(msg,1);
+            }
+
             send(client_fd, msg, strlen(msg), 0);
         }
     }
@@ -136,9 +157,8 @@ void print_info(void)
 {
     printf("Connected with server successfully \n");
     printf("\"getlist \" To get the list of available users  \n");
-    printf("\"connect name \" To get connected with the user with name \n");
+    printf("\"connect name \" To get connected with the user with name \n\n");
 }
-
 
 void deframe_print(char *frame)
 {
@@ -148,4 +168,24 @@ void deframe_print(char *frame)
                 printf("[ %s ]\n",s);
                 s=strtok(NULL,DEFRAME);
         }
+}
+
+void change_client(char *buff,int n)
+{
+    if(n == 0)
+    {
+        int i= 5;
+        char *s = strtok(buff," ");
+        char *prev=NULL;
+        while( i-- )
+        {
+            prev = s;
+            s = strtok(NULL," ");
+        }
+        strcpy(client ,prev);
+    }
+    else if(n == 1)
+    {
+        strcpy(client ,"server");
+    }
 }

@@ -104,14 +104,14 @@ void addLog(FILE *fp, char *log)
 
 char **get_list(thread_manage **head, int *number)
 {
-    int n = 0;
+    int n = 1;
     thread_manage *temp = *head;
     if (temp == NULL)
     {
         printf("No users available to send the list. \n");
         return NULL;
     }
-    char **list = (char **)malloc(sizeof(char *) * (++n));
+    char **list = (char **)malloc(sizeof(char *) * (n) );
     if(list == NULL )
     {
         printf("DMA FAILED IN GET LIST \n");
@@ -120,31 +120,25 @@ char **get_list(thread_manage **head, int *number)
 
     while (temp != NULL)
     {
-        if ( ((strcmp(temp->self.name,UNDEF))) )
+        char *name = (char *)malloc(sizeof(char) * (strlen(temp->self.name)));
+        if(name == NULL )
         {
-            char *name = (char *)malloc(sizeof(char) * (strlen(temp->self.name)));
-            if(name == NULL )
+            printf("DMA FAILED NAME \n");
+            free(list);
+            return NULL;
+        }
+        name = temp->self.name;
+        printf("user %d : %s \n", n, temp->self.name);
+        list[ n-1 ] = name;
+        temp = temp->next;
+        if ( (temp != NULL) )
+        {
+            list = (char **)realloc(list, sizeof(char *) * (++n));
+            if(list == NULL)
             {
                 printf("DMA FAILED\n");
                 return NULL;
             }
-            name = temp->self.name;
-            printf("user %d : %s \n", n, temp->self.name);
-            list[n - 1] = name;
-            temp = temp->next;
-            if (temp != NULL && strcmp(temp->self.name,UNDEF))
-            {
-                list = (char **)realloc(list, sizeof(char *) * (n++));
-                if(list == NULL)
-                {
-                    printf("DMA FAILED\n");
-                    return NULL;
-                }
-            }
-        }
-        else
-        {
-            temp = temp->next;
         }
     }
     *number = n;
@@ -159,8 +153,11 @@ char *make_frame(char **list,int n)
     strcat(frame,FRAME_START);
     for(int i=0; i<n; i++)
     {
-        strcat(frame,MSG_START);
-        strcat(frame,list[i]);
+        if(strcmp(list[i],UNDEF))
+        {
+            strcat(frame,MSG_START);
+            strcat(frame,list[i]);
+        }
     }
     strcat(frame,MSG_START);
     strcat(frame,FRAME_END);
@@ -219,7 +216,6 @@ int check_and_connect(thread_info *self, char* name)
 
 void del_node(thread_info *self)
 {
-
     if( self == NULL )
     {
         return;
